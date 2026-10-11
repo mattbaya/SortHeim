@@ -2,6 +2,8 @@
 
 A client-side [BepInEx](https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/) mod for Valheim that sorts the contents of an open chest by **name**, **value**, or **weight**. Distributed via Thunderstore, so it installs from Gale / r2modman.
 
+**Install:** [Svaha-ChestSort on Thunderstore](https://thunderstore.io/c/valheim/p/Svaha/ChestSort/) (search "ChestSort" in Gale or r2modman).
+
 Player-facing docs: [package/README.md](package/README.md).
 
 ## Layout
