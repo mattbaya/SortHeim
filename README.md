@@ -1,0 +1,32 @@
+# Valheim Chest Sort
+
+A client-side [BepInEx](https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/) mod for Valheim that sorts the contents of an open chest by **name**, **value**, or **weight**. Distributed via Thunderstore, so it installs from Gale / r2modman.
+
+Player-facing docs: [package/README.md](package/README.md).
+
+## Layout
+
+| Path | Purpose |
+| --- | --- |
+| `src/` | Mod source (`ChestSort.csproj`, targets `netstandard2.1`) |
+| `package/` | Thunderstore files: `manifest.json`, `README.md`, `CHANGELOG.md`, `icon.png` |
+| `build.sh` | Builds and zips a Thunderstore package into `dist/` |
+| `libs/Managed/` | Game assemblies to compile against (**git-ignored, never commit**) |
+
+## Building
+
+1. Install the .NET 8 SDK (or newer).
+2. Provide Valheim's managed assemblies — either:
+   - copy `assembly_valheim.dll`, `assembly_guiutils.dll`, `assembly_utils.dll`, `UnityEngine.dll`, `UnityEngine.CoreModule.dll`, `UnityEngine.InputLegacyModule.dll`, `UnityEngine.UI.dll`, `UnityEngine.UIModule.dll`, `Unity.TextMeshPro.dll` from `<Valheim>/valheim_Data/Managed` into `libs/Managed/`, or
+   - set `VALHEIM_MANAGED=/path/to/valheim_Data/Managed`.
+
+   No game install? The free dedicated server has the same assemblies:
+   `steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir ./valheim_server +login anonymous +app_update 896660 +quit`
+   (they're in `valheim_server/valheim_server_Data/Managed`).
+3. Run `./build.sh` → `dist/ChestSort-<version>.zip`.
+
+## Releasing
+
+1. Bump `version_number` in `package/manifest.json` and `Version` in `src/ChestSortPlugin.cs`, and add a `package/CHANGELOG.md` entry.
+2. `./build.sh`
+3. Upload the zip at https://thunderstore.io/c/valheim/ (Upload button, signed in to your team).

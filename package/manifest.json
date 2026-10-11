@@ -1,0 +1,9 @@
+{
+  "name": "ChestSort",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/mattbaya/Valheim-Chest-Sort",
+  "description": "Sort the contents of any open chest by item name, trader value, or weight with one click.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2351"
+  ]
+}
