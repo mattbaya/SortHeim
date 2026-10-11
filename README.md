@@ -31,8 +31,6 @@ Player-facing docs: [package/README.md](package/README.md).
 
 Raw-material tiers live in `src/RarityTiers.cs` (`BaseTable`). Names there must be exact prefab names; crafted/smelted/cooked items are derived automatically.
 
-## Releasing
+## Contributing
 
-1. Bump `version_number` in `package/manifest.json` and `Version` in `src/SortHeimPlugin.cs`, and add a `package/CHANGELOG.md` entry.
-2. `./build.sh`
-3. Upload the zip at https://thunderstore.io/c/valheim/ (Upload button, signed in to your team).
+Bug reports and pull requests are welcome. Please open an issue first for anything larger than a small fix. Releases to Thunderstore are published by the maintainer.
