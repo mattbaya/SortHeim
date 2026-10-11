@@ -1,9 +1,9 @@
 {
-  "name": "ChestSort",
+  "name": "SortHeim",
   "author": "Svaha",
-  "version_number": "1.1.0",
-  "website_url": "https://github.com/mattbaya/Valheim-Chest-Sort",
-  "description": "Sort the contents of any open chest by item name, trader value, or weight with one click.",
+  "version_number": "1.0.1",
+  "website_url": "https://github.com/mattbaya/SortHeim",
+  "description": "One-click sorting for chests and your inventory: by name, weight, or rarity (biome tier). Keeps your hotbar and equipped gear in place.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2351"
   ]

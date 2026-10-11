@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>ChestSort</AssemblyName>
-    <RootNamespace>ChestSort</RootNamespace>
+    <AssemblyName>SortHeim</AssemblyName>
+    <RootNamespace>SortHeim</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources/*.png" LogicalName="ChestSort.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Resources/*.png" LogicalName="SortHeim.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,8 @@
-# Valheim Chest Sort
+# SortHeim
 
-A client-side [BepInEx](https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/) mod for Valheim that sorts the contents of an open chest by **name**, **value**, or **weight**. Distributed via Thunderstore, so it installs from Gale / r2modman.
+A client-side [BepInEx](https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/) mod for Valheim that sorts chests and your inventory by **name**, **weight**, or **rarity** (biome tier). Formerly *ChestSort*. Distributed via Thunderstore, so it installs from Gale / r2modman.
 
-**Install:** [Svaha-ChestSort on Thunderstore](https://thunderstore.io/c/valheim/p/Svaha/ChestSort/) (search "ChestSort" in Gale or r2modman).
+**Install:** search "SortHeim" in Gale or r2modman (Thunderstore: `Svaha-SortHeim`).
 
 Player-facing docs: [package/README.md](package/README.md).
 
@@ -10,7 +10,7 @@ Player-facing docs: [package/README.md](package/README.md).
 
 | Path | Purpose |
 | --- | --- |
-| `src/` | Mod source (`ChestSort.csproj`, targets `netstandard2.1`) |
+| `src/` | Mod source (`SortHeim.csproj`, targets `netstandard2.1`) |
 | `package/` | Thunderstore files: `manifest.json`, `README.md`, `CHANGELOG.md`, `icon.png` |
 | `build.sh` | Builds and zips a Thunderstore package into `dist/` |
 | `libs/Managed/` | Game assemblies to compile against (**git-ignored, never commit**) |
@@ -25,10 +25,14 @@ Player-facing docs: [package/README.md](package/README.md).
    No game install? The free dedicated server has the same assemblies:
    `steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir ./valheim_server +login anonymous +app_update 896660 +quit`
    (they're in `valheim_server/valheim_server_Data/Managed`).
-3. Run `./build.sh` → `dist/ChestSort-<version>.zip`.
+3. Run `./build.sh` → `dist/SortHeim-<version>.zip`.
+
+## Rarity table
+
+Raw-material tiers live in `src/RarityTiers.cs` (`BaseTable`). Names there must be exact prefab names; crafted/smelted/cooked items are derived automatically.
 
 ## Releasing
 
-1. Bump `version_number` in `package/manifest.json` and `Version` in `src/ChestSortPlugin.cs`, and add a `package/CHANGELOG.md` entry.
+1. Bump `version_number` in `package/manifest.json` and `Version` in `src/SortHeimPlugin.cs`, and add a `package/CHANGELOG.md` entry.
 2. `./build.sh`
 3. Upload the zip at https://thunderstore.io/c/valheim/ (Upload button, signed in to your team).

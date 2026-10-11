@@ -1,34 +1,33 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
-namespace ChestSort
+namespace SortHeim
 {
     [HarmonyPatch(typeof(InventoryGui))]
     internal static class InventoryGuiPatches
     {
         private const float Spacing = 6f;
-        private static readonly List<GameObject> Buttons = new List<GameObject>();
-        private static Image _weightIcon;
-        private static bool _weightIconFromGame;
+        private static readonly SortMode[] Modes = { SortMode.Name, SortMode.Weight, SortMode.Rarity };
+
+        // Weight buttons still showing the fallback scale, waiting for the game's icon.
+        private static readonly List<Image> PendingWeightIcons = new List<Image>();
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(InventoryGui.Awake))]
         private static void Awake_Postfix(InventoryGui __instance)
         {
-            Buttons.Clear();
-            _weightIcon = null;
-            _weightIconFromGame = false;
-            if (!ChestSortPlugin.ShowButtons.Value) return;
+            PendingWeightIcons.Clear();
 
             var template = __instance.m_takeAllButton;
-            var panel = __instance.m_container;
-            if (template == null || panel == null)
+            if (template == null)
             {
-                ChestSortPlugin.Log.LogWarning("Could not find the chest panel; sort buttons disabled (hotkeys still work).");
+                SortHeimPlugin.Log.LogWarning("Could not find a button to copy; sort buttons disabled (hotkeys still work).");
                 return;
             }
 
@@ -36,34 +35,56 @@ namespace ChestSort
             float height = templateRect.rect.height;
             if (height <= 1f) height = 36f;
             // Symbols only need a compact, roughly square button.
-            float width = ChestSortPlugin.ButtonWidth.Value > 0f ? ChestSortPlugin.ButtonWidth.Value : Mathf.Round(height * 1.5f);
+            float width = SortHeimPlugin.ButtonWidth.Value > 0f ? SortHeimPlugin.ButtonWidth.Value : Mathf.Round(height * 1.5f);
+            var size = new Vector2(width, height);
 
             var tooltipSource = __instance.GetComponentsInChildren<UITooltip>(true).FirstOrDefault(t => t.m_tooltipPrefab != null);
 
-            var offset = ChestSortPlugin.ButtonOffset.Value;
-            var modes = new[] { SortMode.Name, SortMode.Value, SortMode.Weight };
-            for (int i = 0; i < modes.Length; i++)
+            // Chest: a row hanging just below the chest panel's bottom-left corner.
+            if (SortHeimPlugin.ShowChestButtons.Value && __instance.m_container != null)
             {
-                var go = CreateButton(template, panel, modes[i], tooltipSource);
-                var rect = (RectTransform)go.transform;
-                // Row hanging just below the chest panel's bottom-left corner.
-                rect.anchorMin = rect.anchorMax = new Vector2(0f, 0f);
-                rect.pivot = new Vector2(0f, 1f);
-                rect.sizeDelta = new Vector2(width, height);
-                rect.anchoredPosition = offset + new Vector2(i * (width + Spacing), 0f);
-                Buttons.Add(go);
+                for (int i = 0; i < Modes.Length; i++)
+                {
+                    var mode = Modes[i];
+                    var rect = CreateButton(template, __instance.m_container, mode, "chest",
+                        () => InventorySorter.SortOpenContainer(mode), tooltipSource);
+                    Place(rect, size, anchor: new Vector2(0f, 0f), pivot: new Vector2(0f, 1f),
+                        SortHeimPlugin.ChestButtonOffset.Value + new Vector2(i * (width + Spacing), 0f));
+                }
+            }
+
+            // Inventory: a column beside the inventory panel's top-right corner.
+            if (SortHeimPlugin.ShowInventoryButtons.Value && __instance.m_player != null)
+            {
+                for (int i = 0; i < Modes.Length; i++)
+                {
+                    var mode = Modes[i];
+                    var rect = CreateButton(template, __instance.m_player, mode, "inventory",
+                        () => InventorySorter.SortPlayerInventory(mode), tooltipSource);
+                    Place(rect, size, anchor: new Vector2(1f, 1f), pivot: new Vector2(0f, 1f),
+                        SortHeimPlugin.InventoryButtonOffset.Value + new Vector2(0f, -i * (height + Spacing)));
+                }
             }
         }
 
-        private static GameObject CreateButton(Button template, RectTransform parent, SortMode mode, UITooltip tooltipSource)
+        private static void Place(RectTransform rect, Vector2 size, Vector2 anchor, Vector2 pivot, Vector2 position)
+        {
+            rect.anchorMin = rect.anchorMax = anchor;
+            rect.pivot = pivot;
+            rect.sizeDelta = size;
+            rect.anchoredPosition = position;
+        }
+
+        private static RectTransform CreateButton(Button template, RectTransform parent, SortMode mode, string target,
+            Action onClick, UITooltip tooltipSource)
         {
             var go = Object.Instantiate(template.gameObject, parent, false);
-            go.name = "ChestSort_" + mode;
+            go.name = $"SortHeim_{target}_{mode}";
 
             // The clone inherits Take All's persistent onClick; replace it outright.
             var button = go.GetComponent<Button>();
             button.onClick = new Button.ButtonClickedEvent();
-            button.onClick.AddListener(() => InventorySorter.SortOpenContainer(mode));
+            button.onClick.AddListener(() => onClick());
             button.interactable = true;
 
             // Strip the gamepad hint (it would otherwise trigger/show Take All's binding)
@@ -79,25 +100,32 @@ namespace ChestSort
             }
 
             var label = go.GetComponentInChildren<TMP_Text>(true);
-            if (mode == SortMode.Weight)
+            var tint = label != null ? label.color : Color.white;
+            switch (mode)
             {
-                if (label != null) label.text = "";
-                _weightIcon = AddIcon(go, label != null ? label.color : Color.white);
-            }
-            else if (label != null)
-            {
-                label.text = mode == SortMode.Name ? "A-Z" : "$";
+                case SortMode.Name:
+                    if (label != null) label.text = "A-Z";
+                    break;
+                case SortMode.Weight:
+                    if (label != null) label.text = "";
+                    var weightIcon = AddIcon(go, Icons.Scale, tint);
+                    if (!TryUseEncumberedIcon(weightIcon)) PendingWeightIcons.Add(weightIcon);
+                    break;
+                case SortMode.Rarity:
+                    if (label != null) label.text = "";
+                    AddIcon(go, Icons.Gem, tint);
+                    break;
             }
 
-            AddTooltip(go, "Sort by " + mode.ToString().ToLowerInvariant(), tooltipSource);
+            string what = mode == SortMode.Rarity ? "rarity (biome)" : mode.ToString().ToLowerInvariant();
+            AddTooltip(go, $"Sort {target} by {what}", tooltipSource);
 
             go.SetActive(true);
-            return go;
+            return (RectTransform)go.transform;
         }
 
-        private static Image AddIcon(GameObject button, Color fallbackTint)
+        private static Image AddIcon(GameObject button, Sprite sprite, Color tint)
         {
-
             var icon = new GameObject("Icon", typeof(RectTransform), typeof(Image));
             var rect = (RectTransform)icon.transform;
             rect.SetParent(button.transform, false);
@@ -109,20 +137,19 @@ namespace ChestSort
             var image = icon.GetComponent<Image>();
             image.preserveAspect = true;
             image.raycastTarget = false;
-            image.color = fallbackTint;
-            image.sprite = Icons.Scale;
-            TryUseEncumberedIcon(image);
+            image.sprite = sprite;
+            image.color = tint;
             return image;
         }
 
-        /// <summary>Swaps in the game's own "Encumbered" status icon once ObjectDB has it.</summary>
-        private static void TryUseEncumberedIcon(Image image)
+        /// <summary>Swaps in the game's own "Encumbered" status icon if ObjectDB has it.</summary>
+        private static bool TryUseEncumberedIcon(Image image)
         {
             var sprite = Icons.Encumbered;
-            if (sprite == null) return;
+            if (sprite == null || image == null) return false;
             image.sprite = sprite;
             image.color = Color.white; // game artwork: show its own colours
-            _weightIconFromGame = true;
+            return true;
         }
 
         private static void AddTooltip(GameObject button, string text, UITooltip source)
@@ -140,23 +167,24 @@ namespace ChestSort
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(InventoryGui.Update))]
-        private static void Update_Postfix(InventoryGui __instance)
+        private static void Update_Postfix()
         {
-            if (__instance.m_currentContainer == null || !InventoryGui.IsVisible()) return;
+            if (!InventoryGui.IsVisible()) return;
 
             // ObjectDB may not have been ready when the buttons were built.
-            if (_weightIcon != null && !_weightIconFromGame) TryUseEncumberedIcon(_weightIcon);
+            if (PendingWeightIcons.Count > 0)
+                PendingWeightIcons.RemoveAll(i => i == null || TryUseEncumberedIcon(i));
 
             if (IsTyping()) return;
 
-            if (ChestSortPlugin.NameKey.Value.IsDown()) InventorySorter.SortOpenContainer(SortMode.Name);
-            else if (ChestSortPlugin.ValueKey.Value.IsDown()) InventorySorter.SortOpenContainer(SortMode.Value);
-            else if (ChestSortPlugin.WeightKey.Value.IsDown()) InventorySorter.SortOpenContainer(SortMode.Weight);
+            if (SortHeimPlugin.NameKey.Value.IsDown()) InventorySorter.SortActive(SortMode.Name);
+            else if (SortHeimPlugin.WeightKey.Value.IsDown()) InventorySorter.SortActive(SortMode.Weight);
+            else if (SortHeimPlugin.RarityKey.Value.IsDown()) InventorySorter.SortActive(SortMode.Rarity);
         }
 
         private static bool IsTyping() =>
             (Chat.instance != null && Chat.instance.HasFocus())
-            || Console.IsVisible()
+            || global::Console.IsVisible()
             || TextInput.IsVisible();
     }
 }
