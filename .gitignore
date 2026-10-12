@@ -3,3 +3,9 @@ obj/
 dist/
 # Game assemblies are Iron Gate's — never commit them.
 libs/
+
+# Claude Code session transcripts (local only)
+.claude-sessions/
+
+# macOS Finder metadata
+.DS_Store
