@@ -1,9 +1,9 @@
 {
   "name": "SortHeim",
   "author": "Svaha",
-  "version_number": "1.0.1",
+  "version_number": "1.1.0",
   "website_url": "https://github.com/mattbaya/SortHeim",
-  "description": "One-click sorting for chests and your inventory: by name, weight, or rarity (biome tier). Keeps your hotbar and equipped gear in place.",
+  "description": "One-click sorting for chests and your inventory: by name, type, weight, or rarity (biome tier). Keeps your hotbar and equipped gear in place.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2351"
   ]

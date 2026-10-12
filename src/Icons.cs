@@ -22,6 +22,9 @@ namespace SortHeim
         /// <summary>Fallback scale icon embedded in the DLL (see Resources/).</summary>
         public static Sprite Scale => LoadEmbedded("scale.png");
 
+        /// <summary>Category-grid icon embedded in the DLL (see Resources/).</summary>
+        public static Sprite Type => LoadEmbedded("type.png");
+
         /// <summary>Gem icon embedded in the DLL (see Resources/).</summary>
         public static Sprite Gem => LoadEmbedded("gem.png");
 

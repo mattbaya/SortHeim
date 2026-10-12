@@ -118,6 +118,10 @@ namespace SortHeim
                     ordered = desc ? items.OrderByDescending(i => WeightOf(i, totals)) : items.OrderBy(i => WeightOf(i, totals));
                     ordered = ordered.ThenBy(DisplayName, byName);
                     break;
+                case SortMode.Type:
+                    ordered = desc ? items.OrderByDescending(ItemCategories.Get) : items.OrderBy(ItemCategories.Get);
+                    ordered = ordered.ThenBy(DisplayName, byName);
+                    break;
                 case SortMode.Rarity:
                     var tiers = items.ToDictionary(i => i, RarityTiers.Get);
                     // Unknown tiers always sink to the end, whichever direction is chosen.

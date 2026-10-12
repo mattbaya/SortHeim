@@ -1,6 +1,6 @@
 # SortHeim
 
-A client-side [BepInEx](https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/) mod for Valheim that sorts chests and your inventory by **name**, **weight**, or **rarity** (biome tier). Formerly *ChestSort*. Distributed via Thunderstore, so it installs from Gale / r2modman.
+A client-side [BepInEx](https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/) mod for Valheim that sorts chests and your inventory by **name**, **type**, **weight**, or **rarity** (biome tier). Formerly *ChestSort*. Distributed via Thunderstore, so it installs from Gale / r2modman.
 
 **Install:** search "SortHeim" in Gale or r2modman ([Svaha-SortHeim on Thunderstore](https://thunderstore.io/c/valheim/p/Svaha/SortHeim/)).
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+- New **type** sort: weapons, ammo, shields, armor, utility, tools, food, potions & meads, then materials split into wood, stone, ore, metal, hides and seeds, then other materials, trophies, fish and misc.
+- New `ButtonStyle` option: set it to `Text` for the classic labelled buttons ("Sort: Name", "Sort: Type", ...) instead of icons.
+
 ## 1.0.1
 - Renamed from ChestSort to **SortHeim**.
 - Sort your **inventory** too (buttons beside the inventory panel). Your hotbar row and equipped gear stay put (configurable).

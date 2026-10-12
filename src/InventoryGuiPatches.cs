@@ -13,7 +13,7 @@ namespace SortHeim
     internal static class InventoryGuiPatches
     {
         private const float Spacing = 6f;
-        private static readonly SortMode[] Modes = { SortMode.Name, SortMode.Weight, SortMode.Rarity };
+        private static readonly SortMode[] Modes = { SortMode.Name, SortMode.Type, SortMode.Weight, SortMode.Rarity };
 
         // Weight buttons still showing the fallback scale, waiting for the game's icon.
         private static readonly List<Image> PendingWeightIcons = new List<Image>();
@@ -34,8 +34,11 @@ namespace SortHeim
             var templateRect = (RectTransform)template.transform;
             float height = templateRect.rect.height;
             if (height <= 1f) height = 36f;
-            // Symbols only need a compact, roughly square button.
-            float width = SortHeimPlugin.ButtonWidth.Value > 0f ? SortHeimPlugin.ButtonWidth.Value : Mathf.Round(height * 1.5f);
+            bool text = SortHeimPlugin.Style.Value == ButtonStyle.Text;
+            // Symbols only need a compact, roughly square button; text needs Take All's width.
+            float autoWidth = text ? templateRect.rect.width : Mathf.Round(height * 1.5f);
+            if (autoWidth <= 1f) autoWidth = 140f;
+            float width = SortHeimPlugin.ButtonWidth.Value > 0f ? SortHeimPlugin.ButtonWidth.Value : autoWidth;
             var size = new Vector2(width, height);
 
             var tooltipSource = __instance.GetComponentsInChildren<UITooltip>(true).FirstOrDefault(t => t.m_tooltipPrefab != null);
@@ -101,10 +104,18 @@ namespace SortHeim
 
             var label = go.GetComponentInChildren<TMP_Text>(true);
             var tint = label != null ? label.color : Color.white;
-            switch (mode)
+            if (SortHeimPlugin.Style.Value == ButtonStyle.Text)
+            {
+                if (label != null) label.text = "Sort: " + mode;
+            }
+            else switch (mode)
             {
                 case SortMode.Name:
                     if (label != null) label.text = "A-Z";
+                    break;
+                case SortMode.Type:
+                    if (label != null) label.text = "";
+                    AddIcon(go, Icons.Type, tint);
                     break;
                 case SortMode.Weight:
                     if (label != null) label.text = "";
@@ -178,6 +189,7 @@ namespace SortHeim
             if (IsTyping()) return;
 
             if (SortHeimPlugin.NameKey.Value.IsDown()) InventorySorter.SortActive(SortMode.Name);
+            else if (SortHeimPlugin.TypeKey.Value.IsDown()) InventorySorter.SortActive(SortMode.Type);
             else if (SortHeimPlugin.WeightKey.Value.IsDown()) InventorySorter.SortActive(SortMode.Weight);
             else if (SortHeimPlugin.RarityKey.Value.IsDown()) InventorySorter.SortActive(SortMode.Rarity);
         }
