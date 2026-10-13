@@ -21,7 +21,7 @@ Valheim has no rarity stat, so SortHeim ranks items by the biome they come from:
 
 0 Meadows → 1 Black Forest → 2 Swamp → 3 Mountain → 4 Plains → 5 Mistlands → 6 Ashlands → 7 Deep North
 
-Raw materials and trophies come from a built-in table. Anything crafted, smelted, cooked or brewed takes the highest tier among its ingredients (via its cheapest recipe), so modded items with recipes are ranked automatically. Items with no known tier go last. To fix or add one, use `TierOverrides`, e.g. `TrophyMoose=7, MyModdedOre=5` (prefab names).
+Raw materials and trophies come from a built-in table. Anything crafted, smelted, cooked or brewed takes the highest tier among its ingredients (via its cheapest recipe), so modded items with recipes are ranked automatically. Within a biome, items are grouped by type (food together, wood together, ...) and then A-Z. Items with no known tier go last. To fix or add one, use `TierOverrides`, e.g. `TrophyMoose=7, MyModdedOre=5` (prefab names).
 
 ## Configuration
 

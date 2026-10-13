@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.1
+- Rarity and weight sorts now group items of the same type together (food with food, wood with wood, ...) before falling back to A-Z, so materials no longer land in the middle of your food.
+
 ## 1.1.0
 - New **type** sort: weapons, ammo, shields, armor, utility, tools, food, potions & meads, then materials split into wood, stone, ore, metal, hides and seeds, then other materials, trophies, fish and misc.
 - New `ButtonStyle` option: set it to `Text` for the classic labelled buttons ("Sort: Name", "Sort: Type", ...) instead of icons.

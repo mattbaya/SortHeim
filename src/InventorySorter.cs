@@ -116,7 +116,8 @@ namespace SortHeim
                 case SortMode.Weight:
                     bool totals = SortHeimPlugin.UseStackTotals.Value;
                     ordered = desc ? items.OrderByDescending(i => WeightOf(i, totals)) : items.OrderBy(i => WeightOf(i, totals));
-                    ordered = ordered.ThenBy(DisplayName, byName);
+                    // Equal weights: keep like with like (food with food, wood with wood) before A-Z.
+                    ordered = ordered.ThenBy(ItemCategories.Get).ThenBy(DisplayName, byName);
                     break;
                 case SortMode.Type:
                     ordered = desc ? items.OrderByDescending(ItemCategories.Get) : items.OrderBy(ItemCategories.Get);
@@ -127,7 +128,8 @@ namespace SortHeim
                     // Unknown tiers always sink to the end, whichever direction is chosen.
                     ordered = items.OrderBy(i => tiers[i] == RarityTiers.Unknown ? 1 : 0);
                     ordered = desc ? ordered.ThenByDescending(i => tiers[i]) : ordered.ThenBy(i => tiers[i]);
-                    ordered = ordered.ThenBy(DisplayName, byName);
+                    // Within a biome, group by type (food with food, wood with wood) before A-Z.
+                    ordered = ordered.ThenBy(ItemCategories.Get).ThenBy(DisplayName, byName);
                     break;
                 default:
                     ordered = desc ? items.OrderByDescending(DisplayName, byName) : items.OrderBy(DisplayName, byName);
