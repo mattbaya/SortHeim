@@ -31,7 +31,7 @@ namespace SortHeim
     {
         public const string Guid = "mbaya.SortHeim";
         public const string Name = "SortHeim";
-        public const string Version = "1.1.1";
+        public const string Version = "1.1.2";
 
         internal static ManualLogSource Log;
 

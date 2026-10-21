@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.2
+- Longer description with examples, troubleshooting and links to the other Svaha mods. No changes to how it works.
+
 ## 1.1.1
 - Rarity and weight sorts now group items of the same type together (food with food, wood with wood, ...) before falling back to A-Z, so materials no longer land in the middle of your food.
 
