@@ -4,7 +4,7 @@ A client-side [BepInEx](https://thunderstore.io/c/valheim/p/denikson/BepInExPack
 
 **Install:** search "SortHeim" in Gale or r2modman ([Svaha-SortHeim on Thunderstore](https://thunderstore.io/c/valheim/p/Svaha/SortHeim/)).
 
-Player-facing docs: [package/README.md](package/README.md).
+Player-facing docs: [package/README.md](package/README.md). Version history: [package/CHANGELOG.md](package/CHANGELOG.md).
 
 ## Layout
 
